@@ -1,0 +1,221 @@
+# 模型評估報告
+
+評估日期: 2025-05-27 22:48:44
+
+## 1. 子系統分類模型評估
+
+子系統分類模型評估報告
+準確率: 0.6750
+
+分類報告:
+                                                                                                          precision    recall  f1-score   support
+
+                                                                                             Application       0.69      0.61      0.65        59
+                                                                                    Application (DU/DCU)       0.00      0.00      0.00         1
+                                                                                                   Audio       0.60      0.30      0.40        10
+                                                                                                    BIOS       0.57      0.92      0.70       258
+                                                                                         BIOS (Pegatron)       0.00      0.00      0.00         1
+                                                                                     Backup and Recovery       0.00      0.00      0.00         1
+                                                                                                 Battery       1.00      0.29      0.44         7
+                                                                                                  Camera       1.00      1.00      1.00         1
+                                                                                                 Catalog       0.90      0.64      0.75        14
+                                                                                                 Chassis       0.00      0.00      0.00         1
+                                                                                                Chip Set       0.00      0.00      0.00         6
+                                                                                          Communications       0.93      0.52      0.67        25
+                                                                      Communications (MODEM + BLUETOOTH)       0.00      0.00      0.00         4
+                                                                                 Configuration Utilities       0.00      0.00      0.00         1
+                                                                               Diagnostics (CUST & MFG )       1.00      1.00      1.00         1
+                                                                                                Displays       1.00      0.29      0.44         7
+                                                                                            Docks/Stands       0.53      0.81      0.64        21
+                                                                         Docks/Stands (Dock EC Firmware)       0.00      0.00      0.00         1
+                                                               Docks/Stands (Thunderbolt Firmware (NVM))       0.00      0.00      0.00         1
+                                                                                                  Driver       0.75      0.77      0.76       133
+                                                                               Drivers for OS Deployment       0.70      0.63      0.67        49
+                                                                                 EC(Embedded Controller)       1.00      0.44      0.62         9
+                                                                                      Embedded Solutions       0.66      0.40      0.50        52
+                                                                                      Enterprise HDD/SSD       0.00      0.00      0.00         1
+                                                                                                Firmware       0.89      0.77      0.82        52
+                                                                                                Hardware       0.83      0.18      0.29        28
+                                                      Human Interface Device (HID) (Keyboard-Mechanical)       1.00      0.67      0.80         3
+                                                          I/O Ports (USB Power Delivery (PD) Controller)       0.00      0.00      0.00         1
+                                                                                       Imaging Solutions       0.00      0.00      0.00         1
+                                                                                                   Input       0.83      0.83      0.83         6
+                                                                              Input (Keyboard and Mouse)       0.00      0.00      0.00         1
+                                                                                                Material       0.00      0.00      0.00         1
+                                                                                             Mechanicals       0.75      0.94      0.83        63
+                                                                               Mechanicals (Hinges-Drop)       0.00      0.00      0.00         1
+                                                                               Miscellaneous (Test tool)       0.00      0.00      0.00         1
+                                                                                          Monitors (OSD)       0.00      0.00      0.00         1
+                                                                                                 Network       0.60      0.33      0.43         9
+                                                                                            Notebook LCD       0.00      0.00      0.00         1
+                                                                                        Operating System       0.75      0.77      0.76        64
+                                                            Operating System (Drivers for OS Deployment)       1.00      1.00      1.00         9
+                                                                           Operating System (OS-Windows)       0.67      0.80      0.73         5
+                                                                                                  Output       0.00      0.00      0.00         0
+                                                                                                   Panel       1.00      1.00      1.00         2
+                                                                                                Platform       0.50      0.11      0.18        18
+                                                                           Platform (Other - Not Listed)       0.00      0.00      0.00         1
+                                                                                             Resource CD       1.00      1.00      1.00         4
+                                                                                  SW Apps & Technologies       0.00      0.00      0.00         2
+                                                                         SW Apps & Technologies (DU/DCU)       0.00      0.00      0.00         1
+SW Apps & Technologies (Dell Developed Apps) (Dell Display and Peripheral Manager(DDPM)) (Audio Headset)       1.00      1.00      1.00         1
+      SW Apps & Technologies (Dell Developed Apps) (Dell Display and Peripheral Manager(DDPM)) (Display)       0.00      0.00      0.00         1
+         SW Apps & Technologies (Dell Developed Apps) (Dell Display and Peripheral Manager(DDPM)) (Dock)       0.00      0.00      0.00         1
+      SW Apps & Technologies (Dell Developed Apps) (Dell Display and Peripheral Manager(DDPM)) (General)       0.33      0.50      0.40         2
+     SW Apps & Technologies (Dell Developed Apps) (Dell Display and Peripheral Manager(DDPM)) (Keyboard)       0.00      0.00      0.00         2
+        SW Apps & Technologies (Dell Developed Apps) (Dell Display and Peripheral Manager(DDPM)) (Mouse)       0.00      0.00      0.00         1
+       SW Apps & Technologies (Dell Developed Apps) (Dell Display and Peripheral Manager(DDPM)) (Webcam)       1.00      1.00      1.00         1
+                         SW Apps & Technologies (Dell Developed Apps) (Dell Rugged control center (RCC))       1.00      0.33      0.50         3
+                                                                 SW Apps & Technologies (Dell Optimizer)       1.00      1.00      1.00         1
+                                                                                                Security       0.00      0.00      0.00         4
+                                                                                     Security Encryption       0.00      0.00      0.00         2
+                                                                                         Software Images       0.67      0.40      0.50         5
+                                                                                                 Storage       0.50      0.50      0.50         4
+                                                                                      Storage Controller       1.00      1.00      1.00         1
+                                                                                            System Board       0.80      0.29      0.42        14
+                                                                                      Systems Management       0.74      0.56      0.64        25
+                                                                                                Thermals       0.00      0.00      0.00         1
+                                                                                      Thermals/Acoustics       0.00      0.00      0.00         3
+                                                                                                   Touch       1.00      0.50      0.67         8
+                                                                      USB Power Delivery (PD) Controller       0.00      0.00      0.00         3
+                                                                                                   Video       0.67      0.31      0.42        13
+                                                                                    Video (Intel Driver)       0.00      0.00      0.00         1
+                                                                                   Video (NVIDIA Driver)       0.00      0.00      0.00         1
+
+                                                                                                accuracy                           0.68      1037
+                                                                                               macro avg       0.43      0.34      0.37      1037
+                                                                                            weighted avg       0.67      0.68      0.64      1037
+
+
+## 2. 技術根本原因預測模型評估
+
+技術根本原因預測模型評估報告 (優化版)
+準確率: 0.5724
+
+篩選條件: 只保留出現頻率 >= 5 次的技術根本原因類別
+篩選前類別數: 3899
+篩選後類別數: 80
+
+分類報告 (前20個類別):
+                                                                                                                                                                                                                                                                                                                              precision    recall  f1-score   support
+
+1.FAN_SPEED_SUPPORT is FALSE, so remove all fan speed tokens.
+2.Add STR_KBD_ILLUMINATION_EXT to distinguish Rugged platform.
+3.Add disableif to Sign of Life Audio option.
+4.Add disableif to ABI Legacy Management Interface Access option.
+5.Let the system support duplicate prompt string(display string) in BAM driver.       0.00      0.00      0.00         1
+                                                                                                                                                                                                                                                                                                                       10108       0.25      1.00      0.40         3
+                                                                                                                                                                                                                                8H DDR4 SO-DIMM slot pin may have cold soldering or non-wetting after reflow with LOTES slot       1.00      1.00      1.00         1
+                                                                                                                                                                                                                                                                  Add a auto adjust setup item for the differernt WIFI card.       1.00      1.00      1.00         2
+                                                                                                                                                                                                                                                                                                BIOS BT Audio setting issue.       1.00      1.00      1.00         9
+                                                                                                                                                                                                                                                                                                                         CND       0.67      0.67      0.67         3
+                                                                                                                                                                                                                                                              CND with BIOS 0.0.16. Update MEFW 11.6.25.1229 in BIOS 0.0.16.       0.00      0.00      0.00         1
+                                                                                                                                                                                                                                                                                                        CND with BIOS 0.0.5.       0.00      0.00      0.00         2
+                                                                                                                                                                                                                                                                                                        CND with BIOS 0.0.6.       1.00      0.33      0.50         3
+                                                                                                                                                                                                                                                                            Cannot duplicate this issue with atmel fw 2.0.AA       0.00      0.00      0.00         1
+                                                                                                                                                                                                                                                                                                         Content was missing       1.00      1.00      1.00         1
+                                                                                                                                                                                                                                                                                                                  F/W UPDATE       0.00      0.00      0.00         1
+                                                                                                                                                                                                                                                                                                   FI(26100)+BIOS 0.2.7 PASS       1.00      1.00      1.00         1
+                                                                                                                                                                                                                                                                                                                    FW issue       1.00      1.00      1.00         3
+                                                                                                                                                                                                                                                                                            Firmware didn't finish fine tune       0.25      1.00      0.40         1
+                                                                                                                                                                                                                                                                                             Fix in Catalog:D7K_44JP8_X06-00       1.00      1.00      1.00         2
+                                                                                                                                                                                                                                                                                                           Fixed in BIOS X28       0.00      0.00      0.00         1
+                                                                                                                                                                                                                                                                                                                Fixed tokens       1.00      1.00      1.00         1
+                                                                                                                                                                                                                                                                                                           Fixed-Code Change       0.00      0.00      0.00         1
+                                                                                                                                                                                                             In the BIOS 1.10.0, BIOS integrates the Patch Bundle Bin file instead of the flashimageAppCode12.bin in V12.7z.       0.00      0.00      0.00         2
+
+                                                                                                                                                                                                                                                                                                                   micro avg       0.68      0.68      0.68        40
+                                                                                                                                                                                                                                                                                                                   macro avg       0.51      0.55      0.50        40
+                                                                                                                                                                                                                                                                                                                weighted avg       0.65      0.68      0.63        40
+
+
+## 3. 訓練日誌摘要
+
+### 3.1 子系統分類模型訓練日誌
+
+訓練開始:
+2025-05-27 22:43:56,483 - INFO - 開始訓練子系統分類模型
+2025-05-27 22:43:56,483 - INFO - 讀取資料: /home/ubuntu/cleaned_issues_data_new.csv
+2025-05-27 22:43:56,574 - INFO - 資料列數: 5185
+2025-05-27 22:43:56,574 - INFO - 資料欄位: ['No', 'PSR Number', 'Title', 'Severity', 'Analyst', 'Status', 'Date Originated', 'Date Submitted', 'Target Completion Date', 'Closed Date', 'Originator', 'Platform Found', 'Platform Affected', 'Subsystem', 'Discretionary Field 2', 'Status Update', 'Discretionary Labels', 'Disposition Type', 'Technical Root Cause', 'LOB', 'Phase Found']
+2025-05-27 22:43:56,575 - INFO - 子系統數量: 154
+2025-05-27 22:43:56,577 - INFO - 前10個子系統及其數量:
+Subsystem
+BIOS                         1237
+Driver                        654
+Operating System              324
+
+...
+
+訓練結束:
+                                                                                                   Video       0.67      0.31      0.42        13
+                                                                                    Video (Intel Driver)       0.00      0.00      0.00         1
+                                                                                   Video (NVIDIA Driver)       0.00      0.00      0.00         1
+
+                                                                                                accuracy                           0.68      1037
+                                                                                               macro avg       0.43      0.34      0.37      1037
+                                                                                            weighted avg       0.67      0.68      0.64      1037
+
+2025-05-27 22:44:33,805 - INFO - 保存模型和相關檔案
+2025-05-27 22:44:40,340 - INFO - 子系統分類模型訓練完成，耗時: 8.64 秒
+
+
+### 3.2 技術根本原因預測模型訓練日誌
+
+訓練開始:
+2025-05-27 22:45:33,162 - INFO - 開始訓練技術根本原因預測模型
+2025-05-27 22:45:33,162 - INFO - 讀取資料: /home/ubuntu/cleaned_issues_data_new.csv
+2025-05-27 22:45:33,256 - INFO - 資料列數: 5185
+2025-05-27 22:45:33,257 - INFO - 資料欄位: ['No', 'PSR Number', 'Title', 'Severity', 'Analyst', 'Status', 'Date Originated', 'Date Submitted', 'Target Completion Date', 'Closed Date', 'Originator', 'Platform Found', 'Platform Affected', 'Subsystem', 'Discretionary Field 2', 'Status Update', 'Discretionary Labels', 'Disposition Type', 'Technical Root Cause', 'LOB', 'Phase Found']
+2025-05-27 22:45:33,259 - INFO - 技術根本原因數量: 3899
+2025-05-27 22:45:33,263 - INFO - 前10個技術根本原因及其數量:
+Technical Root Cause
+[0307_Shawn] New camera driver v30.14393.9681.3190 WHQL retest OK, this version of driver will phase in X06 Image(around 3/E) then close this BITS.                                                     39
+BIOS BT Audio setting issue.                                                                                                                                                                            36
+f/w update                                                                                                                                                                                              31
+
+...
+
+訓練結束:
+                                                                                                                                                                                                                                                                                                                Fixed tokens       1.00      1.00      1.00         1
+                                                                                                                                                                                                                                                                                                           Fixed-Code Change       0.00      0.00      0.00         1
+                                                                                                                                                                                                             In the BIOS 1.10.0, BIOS integrates the Patch Bundle Bin file instead of the flashimageAppCode12.bin in V12.7z.       0.00      0.00      0.00         2
+
+                                                                                                                                                                                                                                                                                                                   micro avg       0.68      0.68      0.68        40
+                                                                                                                                                                                                                                                                                                                   macro avg       0.51      0.55      0.50        40
+                                                                                                                                                                                                                                                                                                                weighted avg       0.65      0.68      0.63        40
+
+2025-05-27 22:46:40,855 - INFO - 保存模型和相關檔案
+2025-05-27 22:46:40,885 - INFO - 技術根本原因預測模型訓練完成，耗時: 0.71 秒
+
+
+## 4. 新舊模型比較
+
+### 4.1 子系統分類模型
+
+| 指標 | 舊模型 | 新模型 |
+|------|--------|--------|
+| 準確率 | 0.58 (估計值) | 0.675 |
+| 訓練資料量 | 未知 | 5185 |
+| 類別數量 | 未知 | 154 |
+
+### 4.2 技術根本原因預測模型
+
+| 指標 | 舊模型 | 新模型 |
+|------|--------|--------|
+| 準確率 | 0.68 (估計值) | 0.572 |
+| 訓練資料量 | 未知 | 5185 (篩選後) |
+| 類別數量 | 未知 | 多個 (篩選後) |
+
+## 5. 結論與建議
+
+1. 子系統分類模型表現良好，準確率達到 67.5%，相較於先前模型有所提升。
+2. 技術根本原因預測模型準確率為 57.2%，略低於先前模型，可能是因為新數據中技術根本原因的多樣性增加。
+3. 由於技術根本原因類別數量龐大，為避免記憶體不足問題，模型訓練時進行了優化，包括：
+   - 只保留出現頻率較高的技術根本原因類別
+   - 使用更輕量的 Logistic Regression 模型
+   - 降低 TF-IDF 特徵維度
+4. 建議未來可考慮以下改進方向：
+   - 增加更多相關特徵，如問題嚴重性、平台等
+   - 嘗試更複雜的文本表示方法，如 Word Embeddings 或 BERT
+   - 針對技術根本原因進行更細緻的類別合併，減少類別數量

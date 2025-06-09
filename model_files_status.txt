@@ -1,0 +1,12 @@
+# 模型檔案狀態
+
+- /home/ubuntu/subsystem_classification_model_new.joblib: 存在
+- /home/ubuntu/subsystem_tfidf_vectorizer_new.joblib: 存在
+- /home/ubuntu/subsystem_label_encoder_new.joblib: 存在
+- /home/ubuntu/root_cause_prediction_model_new.joblib: 存在
+- /home/ubuntu/root_cause_tfidf_vectorizer_new.joblib: 存在
+- /home/ubuntu/root_cause_label_encoder_new.joblib: 存在
+- /home/ubuntu/subsystem_classification_report_new.txt: 存在
+- /home/ubuntu/root_cause_prediction_report_new.txt: 存在
+- /home/ubuntu/subsystem_training_log_new.txt: 存在
+- /home/ubuntu/root_cause_training_log_new.txt: 存在

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Analysis - 問題分析系統</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+        .result-section, .upload-section, .retrain-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .copy-btn, .email-btn {
+            margin-right: 10px;
+        }
+        .prediction-item {
+            margin-bottom: 5px;
+        }
+        .probability-bar {
+            height: 20px;
+            background-color: #007bff;
+            border-radius: 3px;
+        }
+        .nav-tabs {
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            display: none;
+        }
+        .success-message {
+            color: #28a745;
+            margin-top: 10px;
+            display: none;
+        }
+        .model-status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .model-status.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .model-status.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center mb-4">
+                <h1>Issue Analysis</h1>
+                <p class="lead">從問題標題自動判別子系統與技術根本原因</p>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="predict-tab" data-bs-toggle="tab" data-bs-target="#predict" type="button" role="tab" aria-controls="predict" aria-selected="true">預測</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab" aria-controls="upload" aria-selected="false">上傳資料</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="retrain-tab" data-bs-toggle="tab" data-bs-target="#retrain" type="button" role="tab" aria-controls="retrain" aria-selected="false">重新訓練</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <!-- 預測頁籤 -->
+            <div class="tab-pane fade show active" id="predict" role="tabpanel" aria-labelledby="predict-tab">
+                <div class="card">
+                    <div class="card-header">
+                        輸入問題標題
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="titleInput" class="form-label">問題標題</label>
+                            <input type="text" class="form-control" id="titleInput" placeholder="例如: System fails to boot after BIOS update">
+                        </div>
+                        <button id="predictBtn" class="btn btn-primary">預測</button>
+                        <button id="checkModelBtn" class="btn btn-outline-secondary ms-2">檢查模型狀態</button>
+                        <button id="reloadModelBtn" class="btn btn-outline-warning ms-2">重新載入模型</button>
+                        <div id="predictErrorMessage" class="error-message"></div>
+                        <div id="modelStatus" class="model-status"></div>
+                    </div>
+                </div>
+
+                <div id="predictLoading" class="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>正在分析中，請稍候...</p>
+                </div>
+
+                <div id="resultSection" class="result-section">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>預測結果</span>
+                            <div>
+                                <button id="copyBtn" class="btn btn-sm btn-outline-secondary copy-btn">複製結果</button>
+                                <button id="emailBtn" class="btn btn-sm btn-outline-secondary email-btn">郵寄結果</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5>問題標題</h5>
+                            <p id="titleDisplay" class="mb-4"></p>
+
+                            <h5>預測的子系統</h5>
+                            <p id="subsystemDisplay" class="mb-4"></p>
+
+                            <h5>前5個最可能的子系統</h5>
+                            <div id="topSubsystems" class="mb-4"></div>
+
+                            <h5>前5個最可能的技術根本原因</h5>
+                            <div id="topRootCauses"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 上傳頁籤 -->
+            <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+                <div class="card">
+                    <div class="card-header">
+                        上傳 Excel 檔案
+                    </div>
+                    <div class="card-body">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="fileInput" class="form-label">選擇 Excel 檔案</label>
+                                <input type="file" class="form-control" id="fileInput" accept=".xlsx, .xls">
+                                <div class="form-text">只接受 .xlsx 和 .xls 格式</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">上傳</button>
+                            <div id="uploadErrorMessage" class="error-message"></div>
+                            <div id="uploadSuccessMessage" class="success-message"></div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="uploadLoading" class="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>正在上傳檔案，請稍候...</p>
+                </div>
+
+                <div id="uploadSection" class="upload-section">
+                    <div class="card mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>上傳結果</span>
+                            <div>
+                                <button id="startTrainingBtn" class="btn btn-sm btn-success">使用此檔案訓練模型</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5>檔案資訊</h5>
+                            <p id="fileInfo" class="mb-4"></p>
+
+                            <h5>資料預覽</h5>
+                            <div id="dataPreview" class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead id="previewHeader"></thead>
+                                    <tbody id="previewBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 重新訓練頁籤 -->
+            <div class="tab-pane fade" id="retrain" role="tabpanel" aria-labelledby="retrain-tab">
+                <div class="card">
+                    <div class="card-header">
+                        重新訓練模型
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="filePathInput" class="form-label">檔案路徑</label>
+                            <input type="text" class="form-control" id="filePathInput" placeholder="例如: /path/to/data.xlsx">
+                            <div class="form-text">如果您已上傳檔案，可以不填此欄位，系統會自動使用最近上傳的檔案</div>
+                        </div>
+                        <button id="retrainBtn" class="btn btn-primary">開始訓練</button>
+                        <div id="retrainErrorMessage" class="error-message"></div>
+                        <div id="retrainSuccessMessage" class="success-message"></div>
+                    </div>
+                </div>
+
+                <div id="retrainLoading" class="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>正在訓練模型，這可能需要幾分鐘時間...</p>
+                </div>
+
+                <div id="retrainSection" class="retrain-section">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <span>訓練結果</span>
+                        </div>
+                        <div class="card-body">
+                            <h5>模型效能</h5>
+                            <div id="modelPerformance"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 全局變數，用於存儲上傳的檔案路徑
+            let uploadedFilePath = null;
+
+            // 預測功能
+            const titleInput = document.getElementById('titleInput');
+            const predictBtn = document.getElementById('predictBtn');
+            const checkModelBtn = document.getElementById('checkModelBtn');
+            const reloadModelBtn = document.getElementById('reloadModelBtn');
+            const predictLoading = document.getElementById('predictLoading');
+            const resultSection = document.getElementById('resultSection');
+            const titleDisplay = document.getElementById('titleDisplay');
+            const subsystemDisplay = document.getElementById('subsystemDisplay');
+            const topSubsystems = document.getElementById('topSubsystems');
+            const topRootCauses = document.getElementById('topRootCauses');
+            const copyBtn = document.getElementById('copyBtn');
+            const emailBtn = document.getElementById('emailBtn');
+            const predictErrorMessage = document.getElementById('predictErrorMessage');
+            const modelStatus = document.getElementById('modelStatus');
+
+            predictBtn.addEventListener('click', function() {
+                const title = titleInput.value.trim();
+                if (!title) {
+                    showError(predictErrorMessage, '請輸入問題標題');
+                    return;
+                }
+
+                // 隱藏錯誤訊息
+                hideError(predictErrorMessage);
+                modelStatus.style.display = 'none';
+
+                // 顯示載入中
+                predictLoading.style.display = 'block';
+                resultSection.style.display = 'none';
+
+                // 發送預測請求
+                fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: title }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || '預測請求失敗');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 隱藏載入中，顯示結果
+                    predictLoading.style.display = 'none';
+                    resultSection.style.display = 'block';
+
+                    // 填充結果
+                    titleDisplay.textContent = data.title;
+                    subsystemDisplay.textContent = data.subsystem;
+
+                    // 清空先前結果
+                    topSubsystems.innerHTML = '';
+                    topRootCauses.innerHTML = '';
+
+                    // 填充前5個最可能的子系統
+                    data.top_subsystems.forEach((item, index) => {
+                        const percentage = (item.probability * 100).toFixed(2);
+                        const html = `
+                            <div class="prediction-item">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>${index + 1}. ${item.name}</span>
+                                    <span>${percentage}%</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar" role="progressbar" style="width: ${percentage}%;" 
+                                        aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        `;
+                        topSubsystems.innerHTML += html;
+                    });
+
+                    // 填充前5個最可能的技術根本原因
+                    data.top_root_causes.forEach((item, index) => {
+                        const percentage = (item.probability * 100).toFixed(2);
+                        const html = `
+                            <div class="prediction-item">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>${index + 1}. ${item.name}</span>
+                                    <span>${percentage}%</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar" role="progressbar" style="width: ${percentage}%;" 
+                                        aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        `;
+                        topRootCauses.innerHTML += html;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    predictLoading.style.display = 'none';
+                    showError(predictErrorMessage, `預測失敗: ${error.message}`);
+                });
+            });
+
+            // 檢查模型狀態
+            checkModelBtn.addEventListener('click', function() {
+                fetch('/model_status')
+                .then(response => response.json())
+                .then(data => {
+                    modelStatus.innerHTML = '';
+                    modelStatus.className = 'model-status ' + (data.models_loaded ? 'success' : 'error');
+                    
+                    let html = `<h6>${data.models_loaded ? '模型已成功載入' : '模型載入失敗'}</h6>`;
+                    html += `<p>模型目錄: ${data.model_dir} (${data.model_dir_exists ? '存在' : '不存在'})</p>`;
+                    
+                    if (data.model_files && data.model_files.length > 0) {
+                        html += '<p>模型檔案:</p><ul>';
+                        data.model_files.forEach(file => {
+                            html += `<li>${file}</li>`;
+                        });
+                        html += '</ul>';
+                    } else {
+                        html += '<p>未找到模型檔案</p>';
+                    }
+                    
+                    modelStatus.innerHTML = html;
+                    modelStatus.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    modelStatus.className = 'model-status error';
+                    modelStatus.innerHTML = `<p>檢查模型狀態失敗: ${error.message}</p>`;
+                    modelStatus.style.display = 'block';
+                });
+            });
+
+            // 重新載入模型
+            reloadModelBtn.addEventListener('click', function() {
+                modelStatus.style.display = 'none';
+                
+                fetch('/reload_models', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    modelStatus.className = 'model-status ' + (data.success ? 'success' : 'error');
+                    modelStatus.innerHTML = `<p>${data.message}</p>`;
+                    modelStatus.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    modelStatus.className = 'model-status error';
+                    modelStatus.innerHTML = `<p>重新載入模型失敗: ${error.message}</p>`;
+                    modelStatus.style.display = 'block';
+                });
+            });
+
+            // 複製結果
+            copyBtn.addEventListener('click', function() {
+                const result = formatResultForCopy();
+                navigator.clipboard.writeText(result).then(function() {
+                    alert('結果已複製到剪貼簿');
+                }, function() {
+                    alert('複製失敗，請手動複製');
+                });
+            });
+
+            // 郵寄結果
+            emailBtn.addEventListener('click', function() {
+                const result = formatResultForCopy();
+                const subject = '問題分析結果: ' + titleDisplay.textContent;
+                const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(result)}`;
+                window.location.href = mailtoLink;
+            });
+
+            // 格式化結果用於複製和郵寄
+            function formatResultForCopy() {
+                let result = `問題標題: ${titleDisplay.textContent}\n\n`;
+                result += `預測的子系統: ${subsystemDisplay.textContent}\n\n`;
+                
+                result += `前5個最可能的子系統:\n`;
+                const subsystemItems = topSubsystems.querySelectorAll('.prediction-item');
+                subsystemItems.forEach((item, index) => {
+                    const name = item.querySelector('.d-flex span:first-child').textContent;
+                    const percentage = item.querySelector('.d-flex span:last-child').textContent;
+                    result += `${name} ${percentage}\n`;
+                });
+                
+                result += `\n前5個最可能的技術根本原因:\n`;
+                const rootCauseItems = topRootCauses.querySelectorAll('.prediction-item');
+                rootCauseItems.forEach((item, index) => {
+                    const name = item.querySelector('.d-flex span:first-child').textContent;
+                    const percentage = item.querySelector('.d-flex span:last-child').textContent;
+                    result += `${name} ${percentage}\n`;
+                });
+                
+                return result;
+            }
+
+            // 上傳功能
+            const uploadForm = document.getElementById('uploadForm');
+            const fileInput = document.getElementById('fileInput');
+            const uploadLoading = document.getElementById('uploadLoading');
+            const uploadSection = document.getElementById('uploadSection');
+            const fileInfo = document.getElementById('fileInfo');
+            const previewHeader = document.getElementById('previewHeader');
+            const previewBody = document.getElementById('previewBody');
+            const uploadErrorMessage = document.getElementById('uploadErrorMessage');
+            const uploadSuccessMessage = document.getElementById('uploadSuccessMessage');
+            const startTrainingBtn = document.getElementById('startTrainingBtn');
+
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const file = fileInput.files[0];
+                if (!file) {
+                    showError(uploadErrorMessage, '請選擇檔案');
+                    return;
+                }
+
+                // 檢查檔案類型
+                if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                    showError(uploadErrorMessage, '只接受 .xlsx 和 .xls 格式');
+                    return;
+                }
+
+                // 隱藏錯誤訊息
+                hideError(uploadErrorMessage);
+                hideSuccess(uploadSuccessMessage);
+
+                // 顯示載入中
+                uploadLoading.style.display = 'block';
+                uploadSection.style.display = 'none';
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // 發送上傳請求
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || '上傳請求失敗');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 隱藏載入中，顯示結果
+                    uploadLoading.style.display = 'none';
+                    uploadSection.style.display = 'block';
+
+                    // 顯示成功訊息
+                    showSuccess(uploadSuccessMessage, data.message);
+
+                    // 儲存上傳的檔案路徑
+                    uploadedFilePath = data.summary.file_path;
+                    
+                    // 更新重新訓練頁籤的檔案路徑輸入框
+                    document.getElementById('filePathInput').value = uploadedFilePath;
+
+                    // 填充檔案資訊
+                    fileInfo.innerHTML = `
+                        <strong>檔案名稱:</strong> ${file.name}<br>
+                        <strong>檔案大小:</strong> ${formatFileSize(file.size)}<br>
+                        <strong>資料列數:</strong> ${data.summary.total_rows}<br>
+                        <strong>欄位數:</strong> ${data.summary.columns.length}<br>
+                        <strong>檔案路徑:</strong> ${uploadedFilePath}
+                    `;
+
+                    // 填充資料預覽
+                    previewHeader.innerHTML = '<tr>' + data.summary.columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
+                    
+                    previewBody.innerHTML = '';
+                    data.summary.preview.forEach(row => {
+                        let rowHtml = '<tr>';
+                        data.summary.columns.forEach(col => {
+                            rowHtml += `<td>${row[col] !== null && row[col] !== undefined ? row[col] : ''}</td>`;
+                        });
+                        rowHtml += '</tr>';
+                        previewBody.innerHTML += rowHtml;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    uploadLoading.style.display = 'none';
+                    showError(uploadErrorMessage, `上傳失敗: ${error.message}`);
+                });
+            });
+
+            // 從上傳頁籤直接開始訓練
+            startTrainingBtn.addEventListener('click', function() {
+                if (!uploadedFilePath) {
+                    alert('請先上傳檔案');
+                    return;
+                }
+                
+                // 切換到重新訓練頁籤
+                document.getElementById('retrain-tab').click();
+                
+                // 設定檔案路徑
+                document.getElementById('filePathInput').value = uploadedFilePath;
+                
+                // 自動點擊開始訓練按鈕
+                document.getElementById('retrainBtn').click();
+            });
+
+            // 重新訓練功能
+            const filePathInput = document.getElementById('filePathInput');
+            const retrainBtn = document.getElementById('retrainBtn');
+            const retrainLoading = document.getElementById('retrainLoading');
+            const retrainSection = document.getElementById('retrainSection');
+            const modelPerformance = document.getElementById('modelPerformance');
+            const retrainErrorMessage = document.getElementById('retrainErrorMessage');
+            const retrainSuccessMessage = document.getElementById('retrainSuccessMessage');
+
+            retrainBtn.addEventListener('click', function() {
+                const filePath = filePathInput.value.trim() || uploadedFilePath;
+                
+                if (!filePath) {
+                    showError(retrainErrorMessage, '請輸入檔案路徑或先上傳檔案');
+                    return;
+                }
+
+                // 隱藏錯誤訊息
+                hideError(retrainErrorMessage);
+                hideSuccess(retrainSuccessMessage);
+
+                // 顯示載入中
+                retrainLoading.style.display = 'block';
+                retrainSection.style.display = 'none';
+
+                // 發送重新訓練請求
+                fetch('/retrain', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ file_path: filePath })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || '重新訓練請求失敗');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 隱藏載入中，顯示結果
+                    retrainLoading.style.display = 'none';
+                    retrainSection.style.display = 'block';
+
+                    // 顯示成功訊息
+                    showSuccess(retrainSuccessMessage, data.message);
+
+                    // 填充模型效能
+                    modelPerformance.innerHTML = `
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">子系統分類模型</h6>
+                                <p class="card-text">準確率: ${data.details.subsystem_model_accuracy * 100}%</p>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">技術根本原因預測模型</h6>
+                                <p class="card-text">準確率: ${data.details.root_cause_model_accuracy * 100}%</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">訓練資訊</h6>
+                                <p class="card-text">訓練時間: ${data.details.training_time}</p>
+                                <p class="card-text">使用檔案: ${data.details.file_used}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 重新載入模型
+                    fetch('/reload_models', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showSuccess(retrainSuccessMessage, retrainSuccessMessage.textContent + ' 模型已重新載入。');
+                        } else {
+                            showError(retrainErrorMessage, '模型訓練成功，但重新載入失敗。請手動重新載入模型。');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error reloading models:', error);
+                        showError(retrainErrorMessage, '模型訓練成功，但重新載入失敗。請手動重新載入模型。');
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    retrainLoading.style.display = 'none';
+                    showError(retrainErrorMessage, `重新訓練失敗: ${error.message}`);
+                });
+            });
+
+            // 工具函數
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function showError(element, message) {
+                element.textContent = message;
+                element.style.display = 'block';
+            }
+
+            function hideError(element) {
+                element.textContent = '';
+                element.style.display = 'none';
+            }
+
+            function showSuccess(element, message) {
+                element.textContent = message;
+                element.style.display = 'block';
+            }
+
+            function hideSuccess(element) {
+                element.textContent = '';
+                element.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
